@@ -11,13 +11,20 @@ class PostsNew extends Component {
           type="text"
           {...field.input}
         />
+        <span>{field.meta.error}</span>
       </div>
     );
   }
 
+  onSubmit(values) {
+    console.log(values);
+  }
+
   render() {
+    const { handleSubmit } = this.props;
+
     return (
-      <form>
+      <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
         <Field
           label="Title"
           name="title"
@@ -25,7 +32,7 @@ class PostsNew extends Component {
         />
         <Field
           label="Categories"
-          name="tags"
+          name="categories"
           component={this.renderField}
         />
         <Field
@@ -33,11 +40,32 @@ class PostsNew extends Component {
           name="content"
           component={this.renderField}
         />
+        <button type="submit" className="btn btn-primary">Submit</button>
       </form>
     );
   }
 }
 
+function validate(values) {
+  const errors = {};
+
+  // Validate the inputs from values
+  if (!values.title) {
+    errors.title = "Enter a title!";
+  }
+  if (!values.categories) {
+    errors.categories = "Enter some categories";
+  }
+  if (!values.content) {
+    errors.content = "Enter some content please";
+  }
+
+  // If errors is empty, the form is okay to submit
+  // If errors has any properties, redux form assumes input is invalid
+  return errors;
+}
+
 export default reduxForm({
+  validate,
   form: 'PostsNewForm'
 })(PostsNew);
